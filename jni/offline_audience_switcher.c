@@ -7,6 +7,13 @@
 #include <sys/poll.h>
 #include <time.h>
 #include <linux/input.h>
+#include <sys/system_properties.h>
+
+int dji_goggles_are_v2() {
+    char goggles_version_response[255];
+    int len = __system_property_get("ro.product.device", (char *)&goggles_version_response);
+    return(strcmp(goggles_version_response, "pigeon_wm170_gls") == 0);
+}
 
 static volatile sig_atomic_t quit = 0;
 
@@ -42,6 +49,7 @@ int main(){
 	struct input_event ev;
 	int event_fd = open("/dev/input/event0", O_RDONLY);
 	memset(&button_start, 0, sizeof(button_start));
+	int is_goggle_V2 = dji_goggles_are_v2();
 	
 	while(!quit){
 		clock_gettime(CLOCK_MONOTONIC, &now);
@@ -49,9 +57,21 @@ int main(){
 		if(button_start.tv_sec > 0 && ((now.tv_sec - button_start.tv_sec) > 6)) {
 			// We held the back button channel down for 7 seconds.
 			memset(&button_start, 0, sizeof(button_start));
-			system("setprop dji.glasses_service 0");
+			if(is_goggle_V2 == 1){
+				system("setprop dji.glasses_wm150_service 0");
+			}
+			else{
+				system("setprop dji.glasses_service 0");
+			}
+			
 			write_to_cfg_file();
-			system("setprop dji.glasses_service 1");
+			
+			if(is_goggle_V2 == 1){
+				system("setprop dji.glasses_wm150_service 1");
+			}
+			else{
+				system("setprop dji.glasses_service 1");
+			}
 			system("/system/bin/modem_info.sh reboot");
 		}
 

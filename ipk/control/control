@@ -1,5 +1,5 @@
 Package: offline-audience-switcher
-Version: 0.0.1
+Version: 0.0.2
 Maintainer: funnel
 Description: Hold channel down button for 7 seconds to switch from 50Mbit mode to 25Mbit mode even without an Airunit connected. Makes audience mode accessible.
 Architecture: pigeon-glasses
