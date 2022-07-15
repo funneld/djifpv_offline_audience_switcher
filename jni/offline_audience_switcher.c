@@ -55,7 +55,7 @@ int main(){
 		clock_gettime(CLOCK_MONOTONIC, &now);
 
 		if(button_start.tv_sec > 0 && ((now.tv_sec - button_start.tv_sec) > 6)) {
-			// We held the back button channel down for 7 seconds.
+			// We held the back button channel down for X seconds.
 			memset(&button_start, 0, sizeof(button_start));
 			if(is_goggle_V2 == 1){
 				system("setprop dji.glasses_wm150_service 0");
@@ -90,6 +90,8 @@ int main(){
 			}
 			// printf("input type: %i, code: %i, value: %i\n", ev.type, ev.code, ev.value);
 		}
+		
+		usleep(250000);
 	}
 	close(event_fd);
 
